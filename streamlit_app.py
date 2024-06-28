@@ -7,11 +7,33 @@ from langchain.schema import (
     HumanMessage,
     AIMessage
 )
+
 openapi_key = st.secrets["OPENAI_API_KEY"]
 
-# Set streamlit page configuration
-st.set_page_config(page_title="Hope to Skill ChatBot")
-st.title("AI Mentor")
+# Set page configuration with title, icon, and background gradient
+st.set_page_config(
+    page_title="ChatBot",
+    page_icon="🤖",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    )
+
+# Add custom CSS for gradient background
+st.markdown(
+    """
+    <style>
+    body {
+        background-image: linear-gradient(to bottom right, #00c6ff, #0072ff);
+        color: white;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Title with robotic icon and developer name
+st.title("🤖 AI Nova")
+st.write("Developed by Shahid Hussain")
 
 # Initialize session state variables
 if 'entered_prompt' not in st.session_state:
@@ -45,8 +67,7 @@ def build_message_list():
     """
     # Start zipped_messages with the SystemMessage
     zipped_messages = [SystemMessage(
-        # content="You are a helpful AI assistant talking with a human. If you do not know an answer, just say 'I don't know', do not make up an answer.")]
-        content = """your name is AI Mentor. You are an AI Technical Expert for Artificial Intelligence, here to guide and assist students with their AI-related questions and concerns. Please provide accurate and helpful information, and always maintain a polite and professional tone.
+        content="""your name is AI Mentor. You are an AI Technical Expert for Artificial Intelligence, here to guide and assist students with their AI-related questions and concerns. Please provide accurate and helpful information, and always maintain a polite and professional tone.
 
                 1. Greet the user politely ask user name and ask how you can assist them with AI-related queries.
                 2. Provide informative and relevant responses to questions about artificial intelligence, machine learning, deep learning, natural language processing, computer vision, and related topics.
@@ -59,15 +80,12 @@ def build_message_list():
                 Remember, your primary goal is to assist and educate students in the field of Artificial Intelligence. Always prioritize their learning experience and well-being."""
     )]
 
-
     # Zip together the past and generated messages
     for human_msg, ai_msg in zip_longest(st.session_state['past'], st.session_state['generated']):
         if human_msg is not None:
-            zipped_messages.append(HumanMessage(
-                content=human_msg))  # Add user messages
+            zipped_messages.append(HumanMessage(content=human_msg))  # Add user messages
         if ai_msg is not None:
-            zipped_messages.append(
-                AIMessage(content=ai_msg))  # Add AI messages
+            zipped_messages.append(AIMessage(content=ai_msg))  # Add AI messages
 
     return zipped_messages
 
@@ -84,10 +102,7 @@ def generate_response():
 
     response = ai_response.content
 
-    return
-
-
-
+    return response
 
 
 # Create a text input for user
@@ -114,8 +129,5 @@ if st.session_state['generated']:
         # Display AI response
         message(st.session_state["generated"][i], key=str(i))
         # Display user message
-        message(st.session_state['past'][i],
-                is_user=True, key=str(i) + '_user')
-
-
+        message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
 
